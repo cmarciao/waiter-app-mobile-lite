@@ -1,7 +1,7 @@
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import { Text } from './src/components/Text';
+
+import { Main } from './src/Main';
 
 export default function App() {
     const [isFontsLoaded] = useFonts({
@@ -15,18 +15,9 @@ export default function App() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text>Waiter Mobile App!</Text>
-            <StatusBar style="auto" />
-        </View>
+        <>
+            <Main />
+            <StatusBar style='dark' />
+        </>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-});
