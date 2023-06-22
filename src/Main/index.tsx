@@ -20,10 +20,17 @@ export function Main() {
         setSelectedTable(table);
     }
 
+    function handleCancelOrder() {
+        setSelectedTable('');
+    }
+
     return (
         <>
             <Container>
-                <Header />
+                <Header
+                    selectedTable={selectedTable}
+                    onCancelOrder={handleCancelOrder}
+                />
 
                 <CategoriesContainer>
                     <Categories />
@@ -38,7 +45,7 @@ export function Main() {
                 <FooterContent>
                     {!selectedTable && (
                         <Button onPress={() => setIsTableModalVisible(true)}>
-                        Novo pedido
+                            Novo pedido
                         </Button>
                     )}
                 </FooterContent>
