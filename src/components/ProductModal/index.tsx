@@ -38,7 +38,7 @@ export function ProductModal({ isVisible, onClose, product }: ProductModalProps)
         >
             <Image
                 source={{
-                    uri: 'https://i.pinimg.com/originals/1d/1e/e1/1d1ee1a42c829a16410ceb7fa9456d09.png'
+                    uri: product.imagePath
                 }}
             >
                 <CloseButton onPress={onClose}>
