@@ -57,23 +57,25 @@ export function ProductModal({ isVisible, onClose, product }: ProductModalProps)
                     </Text>
                 </Header>
 
-                <IngredientsContainer>
-                    <Text weight="600" color="#666">Ingredientes</Text>
+                {product.ingredients.length > 0 && (
+                    <IngredientsContainer>
+                        <Text weight="600" color="#666">Ingredientes</Text>
 
-                    <FlatList
-                        data={product.ingredients}
-                        keyExtractor={(ingredient) => ingredient._id}
-                        showsVerticalScrollIndicator={false}
-                        style={{ marginTop: 20 }}
-                        renderItem={({ item }) => (
-                            <Ingredient>
-                                <Text>{item.icon}</Text>
-                                <Text size={14} color="#666">{item.name}</Text>
-                            </Ingredient>
-                        )}
-                    />
+                        <FlatList
+                            data={product.ingredients}
+                            keyExtractor={(ingredient) => ingredient._id}
+                            showsVerticalScrollIndicator={false}
+                            style={{ marginTop: 20 }}
+                            renderItem={({ item }) => (
+                                <Ingredient>
+                                    <Text>{item.icon}</Text>
+                                    <Text size={14} color="#666">{item.name}</Text>
+                                </Ingredient>
+                            )}
+                        />
 
-                </IngredientsContainer>
+                    </IngredientsContainer>
+                )}
             </ModalBody>
 
             <FooterContainer>
