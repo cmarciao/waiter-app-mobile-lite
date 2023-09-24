@@ -14,11 +14,15 @@ import {
     AddToCartButton
 } from './styles';
 
-import { products } from '../../mocks/products';
 import { ProductModal } from '../ProductModal';
 import { Product } from '../../types/Product';
 
-export function Menu() {
+interface MenuProps {
+    products: Product[];
+    onAddToCart: (product: Product) => void;
+}
+
+export function Menu({ products, onAddToCart }: MenuProps) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<null | Product>(null);
 
@@ -33,6 +37,7 @@ export function Menu() {
                 isVisible={isModalVisible}
                 onClose={() => setIsModalVisible(false)}
                 product={selectedProduct}
+                onAddToCart={onAddToCart}
             />
             <FlatList
                 data={products}
@@ -44,7 +49,7 @@ export function Menu() {
                     <ProductContainer onPress={() => handleOpenModal(item)}>
                         <ProductImage
                             source={{
-                                uri: item.imagePath
+                                uri: `http://192.168.1.3:3001/uploads/${item.imagePath}`
                             }}
                         />
 
@@ -60,7 +65,7 @@ export function Menu() {
                             </Text>
                         </ProductDetails>
 
-                        <AddToCartButton>
+                        <AddToCartButton onPress={() => onAddToCart(item)}>
                             <PlusCircle />
                         </AddToCartButton>
                     </ProductContainer>
