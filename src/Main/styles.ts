@@ -34,3 +34,12 @@ export const CenteredContainer = styled.View`
     align-items: center;
     justify-content: center;
 `;
+
+export const ErrorContainer = styled.View`
+    flex-direction: row;
+`;
+
+export const ErrorImage = styled.Image`
+    width: 50px;
+    height: 50px;
+`;

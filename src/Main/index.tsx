@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Header } from '../components/Header';
 import { Categories } from '../components/Categories';
 import { Menu } from '../components/Menu';
@@ -8,7 +8,9 @@ import { Container,
     MenuContainer,
     FooterContainer,
     FooterContent,
-    CenteredContainer
+    CenteredContainer,
+    ErrorContainer,
+    ErrorImage
 } from './styles';
 import { Button } from '../components/Button';
 import { TableModal } from '../components/TableModal';
@@ -29,16 +31,28 @@ export function Main() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+    const [hasError, setHasError] = useState(false);
 
-    useEffect(() => {
+    const loadData = useCallback(() => {
+        setIsLoading(true);
+
         Promise.all([
             api.get('/categories'),
             api.get('/products')
         ]).then(([categoriesResponse, productsResponse]) => {
             setCategories(categoriesResponse.data);
             setProducts(productsResponse.data);
+
             setIsLoading(false);
+            setHasError(false);
+        }).catch(() => {
+            setIsLoading(false);
+            setHasError(true);
         });
+    }, []);
+
+    useEffect(() => {
+        loadData();
     }, []);
 
     async function handleSelectCategory(categoryId: string) {
@@ -114,6 +128,10 @@ export function Main() {
         });
     }
 
+    function handleTryAgain() {
+        loadData();
+    }
+
     return (
         <>
             <Container>
@@ -128,7 +146,45 @@ export function Main() {
                     </CenteredContainer>
                 )}
 
-                {!isLoading && (
+                {!isLoading && hasError &&  (
+                    <CenteredContainer>
+                        <ErrorContainer>
+                            <Text size={40} weight={600}>F...</Text>
+                            <ErrorImage
+                                source={{
+                                    uri: 'https://cdn-0.emojis.wiki/emoji-pics/whatsapp/saluting-face-whatsapp.png',
+                                }}
+                            />
+                        </ErrorContainer>
+
+                        <Text style={{ marginTop: 24 }}>Algum erro aconteceu.</Text>
+                        <Text>Por favor, tente novamente.</Text>
+                    </CenteredContainer>
+                )}
+
+                {!isLoading && !hasError && categories.length === 0 && (
+                    <CenteredContainer>
+                        <Text size={40} weight={600}>🥗🍔🍨</Text>
+                        <Text
+                            size={28}
+                            weight={600}
+                            style={{
+                                textAlign: 'center',
+                                marginTop: 8
+                            }}>
+                            Você ainda não têm cadastros...
+                        </Text>
+
+                        <Text style={{
+                            textAlign: 'center',
+                            marginTop: 24
+                        }}>
+                            Você primeiro precisa cadastrar novas categorias e novos produtos.
+                        </Text>
+                    </CenteredContainer>
+                )}
+
+                {!isLoading && !hasError && categories.length !== 0 && (
                     <>
                         <CategoriesContainer>
                             <Categories
@@ -168,25 +224,41 @@ export function Main() {
                 )}
             </Container>
             <FooterContainer>
-
                 <FooterContent>
-                    {!selectedTable && (
+                    {categories.length === 0 && (
                         <Button
-                            onPress={() => setIsTableModalVisible(true)}
-                            disabled={isLoading}
+                            onPress={handleTryAgain}
                         >
-                            Novo pedido
+                            Recarregar
                         </Button>
                     )}
+                    {categories.length !== 0 && (
+                        <>
+                            {!isLoading && hasError && (
+                                <Button
+                                    onPress={handleTryAgain}
+                                >
+                            Tentar novamente
+                                </Button>
+                            )}
+                            {!selectedTable && !hasError && (
+                                <Button
+                                    onPress={() => setIsTableModalVisible(true)}
+                                    disabled={isLoading}
+                                >
+                            Novo pedido
+                                </Button>
+                            )}
 
-                    {selectedTable && (
-                        <Cart
-                            cartItems={cartItems}
-                            onAdd={handleAddToCart}
-                            onDecremment={handleDecremmentCartItem}
-                            onConfirmOrder={handleResetOrder}
-                            selectedTable={selectedTable}
-                        />
+                            {selectedTable && (
+                                <Cart
+                                    cartItems={cartItems}
+                                    onAdd={handleAddToCart}
+                                    onDecremment={handleDecremmentCartItem}
+                                    onConfirmOrder={handleResetOrder}
+                                    selectedTable={selectedTable}
+                                />
+                            )}</>
                     )}
                 </FooterContent>
             </FooterContainer>
